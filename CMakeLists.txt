@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.15)
-project(pq CXX)
+project(pq C)
 
 
 
-add_executable(pq src/pq.cpp src/main.cpp)
+add_executable(pq src/main.c)
 
 
 
