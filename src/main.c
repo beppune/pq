@@ -11,7 +11,11 @@
 #define CTRL_KEY(k) ((k) & 0x1f)
 
 /* data */
-struct termios orig_termios;
+struct editor_state {
+	struct termios orig_termios;
+};
+
+struct editor_state E;
 
 /* terminal */
 int die(const char *s) {
@@ -23,14 +27,14 @@ int die(const char *s) {
 }
 
 void disable_raw() {
-	tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios) == 0 || die("tcgetattr"); 
+	tcsetattr(STDIN_FILENO, TCSAFLUSH, &E.orig_termios) == 0 || die("tcgetattr"); 
 }
 
 void enable_raw() {
-	tcgetattr(STDIN_FILENO, &orig_termios) == 0 || die("tcgetattr"); 
+	tcgetattr(STDIN_FILENO, &E.orig_termios) == 0 || die("tcgetattr"); 
 	atexit(disable_raw);
 
-	struct termios raw = orig_termios;
+	struct termios raw = E.orig_termios;
 	raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
 	raw.c_oflag &= ~(OPOST);
 	raw.c_cflag |= (CS8);
