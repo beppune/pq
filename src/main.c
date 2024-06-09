@@ -15,6 +15,8 @@ struct termios orig_termios;
 
 /* terminal */
 int die(const char *s) {
+	write(STDOUT_FILENO, "\x1b[2J", 4);
+	write(STDOUT_FILENO, "\x1b[H", 3);
 	perror(s);
 	exit(1);
 	return 1;
@@ -50,7 +52,8 @@ int read_key() {
 
 /* output */
 void refresh_screen() {
-	write(STDIN_FILENO, "\x1b[2J", 4);
+	write(STDOUT_FILENO, "\x1b[2J", 4);
+	write(STDOUT_FILENO, "\x1b[H", 3);
 }
 
 /* input */
@@ -59,6 +62,7 @@ int process_key() {
 
 	switch(c) {
 		case CTRL_KEY('q'):
+			refresh_screen();
 			exit(0);
 			break;
 	}
