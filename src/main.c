@@ -51,10 +51,21 @@ int read_key() {
 }
 
 /* output */
+void draw_rows() {
+	for(int y = 0; y < 24; y++) {
+		write(STDOUT_FILENO, "~\r\n", 3);
+	}
+}
+
 void refresh_screen() {
 	write(STDOUT_FILENO, "\x1b[2J", 4);
 	write(STDOUT_FILENO, "\x1b[H", 3);
+
+	draw_rows();
+
+	write(STDOUT_FILENO, "\x1b[H", 3);
 }
+
 
 /* input */
 int process_key() {
@@ -62,7 +73,8 @@ int process_key() {
 
 	switch(c) {
 		case CTRL_KEY('q'):
-			refresh_screen();
+			write(STDOUT_FILENO, "\x1b[2J", 4);
+			write(STDOUT_FILENO, "\x1b[H", 3);
 			exit(0);
 			break;
 	}

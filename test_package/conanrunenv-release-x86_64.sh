@@ -13,4 +13,4 @@ do
 done
 
 
-export PATH="/home/beppune/.conan2/p/b/pqc40ca58873888/p/bin:$PATH"
+export PATH="/home/beppune/.conan2/p/b/pq28760dad0e6cd/p/bin:$PATH"
