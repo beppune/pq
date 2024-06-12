@@ -6,12 +6,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <termios.h>
-
-/* define */
-#define CTRL_KEY(k) ((k) & 0x1f)
-
+#include <sys/ioctl.h>
+/* define */ #define CTRL_KEY(k) ((k) & 0x1f)
 /* data */
 struct editor_state {
+	int screencols;
+	int screenrows;
 	struct termios orig_termios;
 };
 
@@ -54,9 +54,23 @@ int read_key() {
 	return c;
 }
 
+int get_window_size(int *cols, int *rows) {
+	struct winsize ws;
+
+	if( ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0 ) {
+		return -1;
+	}
+	
+	*cols = ws.ws_col;
+	*rows = ws.ws_row;
+
+	return 0;
+		
+}
+
 /* output */
 void draw_rows() {
-	for(int y = 0; y < 24; y++) {
+	for(int y = 0; y < E.screenrows; y++) {
 		write(STDOUT_FILENO, "~\r\n", 3);
 	}
 }
@@ -85,9 +99,15 @@ int process_key() {
 }
 
 /* init */
+
+void init_editor() {
+	if( get_window_size(&E.screencols, &E.screenrows) != 0 ) die("get_window_size");
+}
+
 int main(int argc, char *argv[]) {
 
 	enable_raw();
+	init_editor();
 
 	char c;
 	while ( 1 ) {
